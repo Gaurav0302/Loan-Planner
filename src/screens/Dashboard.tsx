@@ -1,19 +1,13 @@
 import { useMemo } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Stat } from '../components/Stat';
+import { runPlan } from '../data/plans';
 import { useStore } from '../data/store';
-import { monthLabel, money, moneyShort, simulate, years } from '../engine';
+import { monthLabel, money, moneyShort, years } from '../engine';
 
 export function Dashboard() {
   const { data, activePlan, dispatch } = useStore();
-  const { plan, bank } = useMemo(() => {
-    const changes = [...data.facts, ...activePlan.changes];
-    const lumps = [...data.factLumps, ...activePlan.lumps];
-    return {
-      plan: simulate(activePlan.setup, changes, lumps),
-      bank: simulate(activePlan.setup, data.facts, [], { extras: false }),
-    };
-  }, [data.facts, data.factLumps, activePlan]);
+  const { res: plan, bank } = useMemo(() => runPlan(data, activePlan), [data.facts, data.factLumps, activePlan]);
   const first = plan.points[0];
   const otherPlans = data.plans.length - 1;
 

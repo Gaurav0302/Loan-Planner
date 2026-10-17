@@ -37,6 +37,8 @@ export interface AppData {
   importedFromClassic?: string;
   /** The "we brought your data over" note has been dismissed. */
   importNoticeSeen?: boolean;
+  /** Unsaved edits, by plan id, kept so leaving the editor does not lose them. */
+  drafts?: Record<string, Plan>;
 }
 
 export const PLAN_COLORS = ['#3B7BEA', '#8B5CF6', '#E2622D', '#14A37F', '#DB2777', '#0891B2'];

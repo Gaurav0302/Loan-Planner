@@ -151,5 +151,13 @@ export function normalizeData(raw: unknown): AppData | null {
   };
   if (typeof raw.importedFromClassic === 'string') data.importedFromClassic = raw.importedFromClassic;
   if (raw.importNoticeSeen === true) data.importNoticeSeen = true;
+  if (isObj(raw.drafts)) {
+    const drafts: Record<string, Plan> = {};
+    for (const p of plans) {
+      const d = raw.drafts[p.id];
+      if (isObj(d)) drafts[p.id] = { ...normalizePlan(d, 0), id: p.id };
+    }
+    if (Object.keys(drafts).length) data.drafts = drafts;
+  }
   return data;
 }

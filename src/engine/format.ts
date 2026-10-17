@@ -3,13 +3,14 @@ export function money(n: number): string {
   return (n < 0 ? '−$' : '$') + Math.round(Math.abs(n)).toLocaleString('en-AU');
 }
 
-/** "$529k", "$1.33m", "$9.5k". */
+/** "$529k", "$1.33m", "$9.5k", "$640". */
 export function moneyShort(n: number): string {
   const a = Math.abs(n);
   const sign = n < 0 ? '−' : '';
   if (a >= 1e6) return `${sign}$${(a / 1e6).toFixed(2)}m`;
   if (a >= 10000) return `${sign}$${Math.round(a / 1000)}k`;
-  return `${sign}$${(a / 1000).toFixed(1)}k`;
+  if (a >= 1000) return `${sign}$${(a / 1000).toFixed(1)}k`;
+  return money(n);
 }
 
 /** "6.20%" */

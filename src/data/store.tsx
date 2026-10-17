@@ -5,7 +5,20 @@ import type { AppData, Plan } from './types';
 export type Action =
   | { type: 'replaceAll'; data: AppData }
   | { type: 'reset' }
-  | { type: 'dismissImportNotice' };
+  | { type: 'dismissImportNotice' }
+  | { type: 'setActive'; id: string }
+  | { type: 'addPlan'; plan: Plan }
+  | { type: 'savePlan'; plan: Plan }
+  | { type: 'deletePlan'; id: string }
+  | { type: 'setDraft'; plan: Plan }
+  | { type: 'discardDraft'; id: string };
+
+function withoutDraft(drafts: AppData['drafts'], id: string): AppData['drafts'] {
+  if (!drafts || !(id in drafts)) return drafts;
+  const rest = { ...drafts };
+  delete rest[id];
+  return Object.keys(rest).length ? rest : undefined;
+}
 
 export function reducer(state: AppData, action: Action): AppData {
   switch (action.type) {
@@ -15,6 +28,24 @@ export function reducer(state: AppData, action: Action): AppData {
       return starterData();
     case 'dismissImportNotice':
       return { ...state, importNoticeSeen: true };
+    case 'setActive':
+      return state.plans.some((p) => p.id === action.id) ? { ...state, activePlanId: action.id } : state;
+    case 'addPlan':
+      return { ...state, plans: [...state.plans, action.plan] };
+    case 'savePlan': {
+      const plan = { ...action.plan, editedAt: new Date().toISOString() };
+      return { ...state, plans: state.plans.map((p) => (p.id === plan.id ? plan : p)), drafts: withoutDraft(state.drafts, plan.id) };
+    }
+    case 'deletePlan': {
+      if (state.plans.length <= 1) return state;
+      const plans = state.plans.filter((p) => p.id !== action.id);
+      const activePlanId = state.activePlanId === action.id ? plans[0].id : state.activePlanId;
+      return { ...state, plans, activePlanId, drafts: withoutDraft(state.drafts, action.id) };
+    }
+    case 'setDraft':
+      return { ...state, drafts: { ...state.drafts, [action.plan.id]: action.plan } };
+    case 'discardDraft':
+      return { ...state, drafts: withoutDraft(state.drafts, action.id) };
   }
 }
 
