@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from 'react';
 import { loadData, saveData, starterData } from './load';
-import type { AppData, Plan } from './types';
+import type { Change, Lump } from '../engine';
+import type { AppData, CheckIn, Plan } from './types';
 
 export type Action =
   | { type: 'replaceAll'; data: AppData }
@@ -11,7 +12,13 @@ export type Action =
   | { type: 'savePlan'; plan: Plan }
   | { type: 'deletePlan'; id: string }
   | { type: 'setDraft'; plan: Plan }
-  | { type: 'discardDraft'; id: string };
+  | { type: 'discardDraft'; id: string }
+  | { type: 'addFact'; change: Change }
+  | { type: 'removeFact'; id: string }
+  | { type: 'addFactLump'; lump: Lump }
+  | { type: 'removeFactLump'; id: string }
+  | { type: 'saveCheckIn'; checkIn: CheckIn }
+  | { type: 'removeCheckIn'; month: string };
 
 function withoutDraft(drafts: AppData['drafts'], id: string): AppData['drafts'] {
   if (!drafts || !(id in drafts)) return drafts;
@@ -46,6 +53,20 @@ export function reducer(state: AppData, action: Action): AppData {
       return { ...state, drafts: { ...state.drafts, [action.plan.id]: action.plan } };
     case 'discardDraft':
       return { ...state, drafts: withoutDraft(state.drafts, action.id) };
+    case 'addFact':
+      return { ...state, facts: [...state.facts, action.change] };
+    case 'removeFact':
+      return { ...state, facts: state.facts.filter((c) => c.id !== action.id) };
+    case 'addFactLump':
+      return { ...state, factLumps: [...state.factLumps, action.lump] };
+    case 'removeFactLump':
+      return { ...state, factLumps: state.factLumps.filter((l) => l.id !== action.id) };
+    case 'saveCheckIn': {
+      const rest = state.checkIns.filter((c) => c.month !== action.checkIn.month);
+      return { ...state, checkIns: [...rest, action.checkIn].sort((a, b) => a.month.localeCompare(b.month)) };
+    }
+    case 'removeCheckIn':
+      return { ...state, checkIns: state.checkIns.filter((c) => c.month !== action.month) };
   }
 }
 

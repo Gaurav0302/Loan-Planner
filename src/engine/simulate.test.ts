@@ -141,6 +141,17 @@ describe('rate changes and the repayment', () => {
     expect(res.points[3].repayment).toBe(6600);
   });
 
+  it('keeps paying the old amount when a later change does not move the rate', () => {
+    const res = simulate(DEFAULT_SETUP, [...cut({ keepPaying: 6762 }), { id: 'g', month: '2027-06', type: 'rate', value: 5.95 }], []);
+    expect(res.points.find((p) => p.idx === toIdx('2027-08'))!.paidOut).toBe(6762);
+  });
+
+  it('stops keeping the old amount when the rate moves again', () => {
+    const res = simulate(DEFAULT_SETUP, [...cut({ keepPaying: 6762 }), { id: 'g', month: '2027-06', type: 'rate', value: 5.7 }], []);
+    const aug = res.points.find((p) => p.idx === toIdx('2027-08'))!;
+    expect(aug.paidOut).toBe(aug.repayment);
+  });
+
   it('keeps paying the old amount and sends the difference to the offset', () => {
     const bank = simulate(DEFAULT_SETUP, cut({}), []);
     const keep = simulate(DEFAULT_SETUP, cut({ keepPaying: 6762 }), []);

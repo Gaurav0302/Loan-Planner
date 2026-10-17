@@ -1,20 +1,50 @@
-import { addMonths, simulate, toIdx, toYM, type Change, type SimResult, type YM } from '../engine';
+import { addMonths, annuity, simulate, toIdx, toYM, type Anchor, type Change, type SimResult, type YM } from '../engine';
 import { newId } from './normalize';
-import { PLAN_COLORS, type AppData, type Plan } from './types';
+import { PLAN_COLORS, type AppData, type CheckIn, type Plan } from './types';
 
 /** A plan's projection with every recorded fact applied, and the bank's schedule on the same rates for comparison. */
 export interface PlanRun {
   res: SimResult;
   bank: SimResult;
+  /** The check-in the projection restarts from, if any. */
+  anchor?: CheckIn;
 }
 
-export function runPlan(data: Pick<AppData, 'facts' | 'factLumps'>, plan: Plan): PlanRun {
+type RunData = Pick<AppData, 'facts' | 'factLumps'> & { checkIns?: CheckIn[] };
+
+/** The latest check-in the plan can restart from, optionally only those before `beforeMonth`. */
+export function latestCheckIn(checkIns: CheckIn[] | undefined, plan: Plan, beforeMonth?: YM): CheckIn | undefined {
+  let found: CheckIn | undefined;
+  for (const c of checkIns ?? []) {
+    if (c.month < plan.setup.start) continue;
+    if (beforeMonth && c.month >= beforeMonth) continue;
+    if (!found || c.month > found.month) found = c;
+  }
+  return found;
+}
+
+/**
+ * Runs the plan from your latest real balances when there are any: months up to that check-in follow the plan,
+ * and from then on the projection starts from the statement figures.
+ */
+export function runPlan(data: RunData, plan: Plan, options: { beforeMonth?: YM; anchored?: boolean } = {}): PlanRun {
   const changes = [...data.facts, ...plan.changes];
+  const checkIn = options.anchored === false ? undefined : latestCheckIn(data.checkIns, plan, options.beforeMonth);
+  const anchor: Anchor | undefined = checkIn && { month: checkIn.month, loan: checkIn.loan, offset: checkIn.offset, kids: checkIn.kids.slice(0, plan.setup.kids.length) };
   return {
-    res: simulate(plan.setup, changes, [...data.factLumps, ...plan.lumps]),
+    res: simulate(plan.setup, changes, [...data.factLumps, ...plan.lumps], { anchor }),
     // Minimum repayments only, but on the same rate path, so the comparison is about your approach, not the rates.
     bank: simulate(plan.setup, changes, [], { extras: false }),
+    anchor: checkIn,
   };
+}
+
+/** The bank's likely new repayment if the rate becomes `rate` from `month`: the balance then, over the remaining term. */
+export function estimateRepayment(res: SimResult, month: YM, rate: number): number {
+  const idx = toIdx(month);
+  const before = res.points.find((p) => p.idx === idx - 1) ?? res.points[0];
+  const remaining = Math.max(1, res.termMonths - (idx - res.startIdx));
+  return annuity(before.loan, rate / 100 / 12, remaining);
 }
 
 export interface PlanSummary {

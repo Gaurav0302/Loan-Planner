@@ -1,5 +1,5 @@
-import { useEffect, useId, useMemo, useState, type ReactNode } from 'react';
-import { MonthStepper, NumberField, Segmented, Stepper, Toggle } from '../components/fields';
+import { useId, useMemo, useState, type ReactNode } from 'react';
+import { MonthStepper, NumberField, Segmented, Stepper, Toggle, ValueInput } from '../components/fields';
 import { MiniChart } from '../components/MiniChart';
 import { PageHeader } from '../components/PageHeader';
 import { changeKinds, describeChange, monthlyForGoal, startingValue } from '../data/describe';
@@ -48,8 +48,8 @@ function Editor({ saved, draft, isActive, section, setSection, dispatch }: Edito
   const update = (fn: (p: Plan) => Plan) => dispatch({ type: 'setDraft', plan: fn(draft) });
   const setSetup = (patch: Partial<Setup>) => update((p) => ({ ...p, setup: { ...p.setup, ...patch } }));
 
-  const now = useMemo(() => runPlan(data, draft), [data.facts, data.factLumps, draft]);
-  const before = useMemo(() => runPlan(data, saved), [data.facts, data.factLumps, saved]);
+  const now = useMemo(() => runPlan(data, draft), [data.facts, data.factLumps, data.checkIns, draft]);
+  const before = useMemo(() => runPlan(data, saved), [data.facts, data.factLumps, data.checkIns, saved]);
   const sum = summarizeRun(draft, now);
   const from = presetStart(draft);
   const fromPoint = now.res.points.find((p) => p.idx === toIdx(from) - 1) ?? now.res.points[0];
@@ -191,21 +191,6 @@ function SectionHead({ title, intro }: { title: string; intro: string }) {
       <h2 id="section-title">{title}</h2>
       <p className="muted">{intro}</p>
     </div>
-  );
-}
-
-/** A plain number box that only reports valid numbers, for values inside lists. */
-function ValueInput({ label, value, step, onChange }: { label: string; value: number; step: number; onChange: (v: number) => void }) {
-  const id = useId();
-  const [text, setText] = useState(String(value));
-  useEffect(() => setText(String(value)), [value]);
-  return (
-    <span className="value-input">
-      <label htmlFor={id}>{label}</label>
-      <input id={id} type="number" inputMode="decimal" step={step} min={0} value={text}
-        onChange={(e) => { setText(e.target.value); const n = Number(e.target.value); if (e.target.value.trim() !== '' && Number.isFinite(n) && n >= 0) onChange(n); }}
-        onBlur={() => setText(String(value))} />
-    </span>
   );
 }
 

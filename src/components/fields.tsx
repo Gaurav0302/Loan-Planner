@@ -40,6 +40,24 @@ export function NumberField({ label, value, onChange, min, max, step, was, hint 
   );
 }
 
+/** A plain number box that only reports valid numbers, for values inside lists and forms. */
+export function ValueInput({ label, value, step, onChange, hint }: { label: string; value: number; step: number; onChange: (v: number) => void; hint?: ReactNode }) {
+  const id = useId();
+  const [text, setText] = useState(String(value));
+  useEffect(() => setText(String(value)), [value]);
+  return (
+    <span className="value-input">
+      <span className="value-input-text">
+        <label htmlFor={id}>{label}</label>
+        {hint && <span className="field-hint">{hint}</span>}
+      </span>
+      <input id={id} type="number" inputMode="decimal" step={step} min={0} value={text}
+        onChange={(e) => { setText(e.target.value); const n = Number(e.target.value); if (e.target.value.trim() !== '' && Number.isFinite(n) && n >= 0) onChange(n); }}
+        onBlur={() => setText(String(value))} />
+    </span>
+  );
+}
+
 interface StepperProps {
   label: string;
   display: string;
@@ -48,22 +66,23 @@ interface StepperProps {
   decLabel: string;
   incLabel: string;
   canDec?: boolean;
+  canInc?: boolean;
 }
 
-export function Stepper({ label, display, onDec, onInc, decLabel, incLabel, canDec = true }: StepperProps) {
+export function Stepper({ label, display, onDec, onInc, decLabel, incLabel, canDec = true, canInc = true }: StepperProps) {
   return (
     <div className="stepper-row">
       <span className="stepper-label">{label}</span>
       <span className="stepper" role="group" aria-label={label}>
         <button type="button" aria-label={decLabel} onClick={onDec} disabled={!canDec}>‹</button>
         <output aria-live="polite">{display}</output>
-        <button type="button" aria-label={incLabel} onClick={onInc}>›</button>
+        <button type="button" aria-label={incLabel} onClick={onInc} disabled={!canInc}>›</button>
       </span>
     </div>
   );
 }
 
-export function MonthStepper({ label, value, onChange, min }: { label: string; value: YM; onChange: (v: YM) => void; min?: YM }) {
+export function MonthStepper({ label, value, onChange, min, max }: { label: string; value: YM; onChange: (v: YM) => void; min?: YM; max?: YM }) {
   return (
     <Stepper
       label={label}
@@ -73,6 +92,7 @@ export function MonthStepper({ label, value, onChange, min }: { label: string; v
       decLabel={`${label}: a month earlier`}
       incLabel={`${label}: a month later`}
       canDec={!min || toIdx(value) > toIdx(min)}
+      canInc={!max || toIdx(value) < toIdx(max)}
     />
   );
 }

@@ -7,7 +7,7 @@ import { monthLabel, money, moneyShort, years } from '../engine';
 
 export function Dashboard() {
   const { data, activePlan, dispatch } = useStore();
-  const { res: plan, bank } = useMemo(() => runPlan(data, activePlan), [data.facts, data.factLumps, activePlan]);
+  const { res: plan, bank } = useMemo(() => runPlan(data, activePlan), [data.facts, data.factLumps, data.checkIns, activePlan]);
   const first = plan.points[0];
   const otherPlans = data.plans.length - 1;
 

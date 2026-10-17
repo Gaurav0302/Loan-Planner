@@ -86,8 +86,9 @@ export function simulate(setup: Setup, changes: Change[], lumps: Lump[], options
             live.rate = value;
             r = value / 100 / 12;
             if (loanActive) repayment = src?.repayment ? src.repayment : annuity(loan, r, n - m);
+            // A new repayment from the bank ends any "kept paying the old amount" arrangement unless this change sets one.
+            keepPaying = src?.keepPaying ?? 0;
           }
-          keepPaying = src?.keepPaying ?? 0;
         }
       } else if (type.startsWith('kid')) {
         const i = Number(type.slice(3));

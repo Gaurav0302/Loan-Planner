@@ -4,8 +4,8 @@ import { useLocation } from './lib/router';
 import { useTheme } from './lib/theme';
 import { Dashboard } from './screens/Dashboard';
 import { PlanEditor } from './screens/PlanEditor';
-import { Placeholder } from './screens/Placeholder';
 import { Plans } from './screens/Plans';
+import { Record } from './screens/Record';
 import { Settings } from './screens/Settings';
 import { Shell } from './shell/Shell';
 
@@ -32,7 +32,7 @@ export function App() {
       {route === 'dashboard' && <Dashboard />}
       {route === 'plans' && <Plans />}
       {route === 'edit' && <PlanEditor planId={param} />}
-      {route === 'record' && <Placeholder title="Record" sub="Tell the app what really happened: rate changes and your statement balances." phase={4} coming="recording a change from a given month, and monthly balance check-ins that the projection restarts from." />}
+      {route === 'record' && <Record tab={param} />}
       {route === 'settings' && <Settings theme={theme} onTheme={setTheme} />}
     </Shell>
   );
