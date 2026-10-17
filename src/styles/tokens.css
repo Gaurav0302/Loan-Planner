@@ -1,0 +1,59 @@
+/* Colour tokens for the two themes. Components only use these variables. */
+:root[data-theme='light'] {
+  --bg: #f5f6f7;
+  --panel: #ffffff;
+  --panel2: #f1f3f5;
+  --line: #e2e5e9;
+  --ink: #0f1419;
+  --muted: #5d6772;
+  --accent: #1d5fd6;
+  --accent-ink: #ffffff;
+  --loan: #0f7b5f;
+  --offset: #1d5fd6;
+  --kids: #c0650a;
+  --kids-soft: #fbebd8;
+  --good: #0b7a55;
+  --good-soft: #ddf3ea;
+  --bad: #b83a12;
+  --bad-soft: #fbe4da;
+  --side: #0f1419;
+  --side-ink: #e9edf1;
+  --side-muted: #8c96a1;
+  --side-active: rgba(255, 255, 255, 0.09);
+  --chart-plan: #a9b2bc;
+  --chart-orig: #d4d9de;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0a0d12;
+  --panel: #11161f;
+  --panel2: #18202c;
+  --line: #232d3b;
+  --ink: #e8edf4;
+  --muted: #8d98a9;
+  --accent: #7aaeff;
+  --accent-ink: #0a0d12;
+  --loan: #4fd1a1;
+  --offset: #7aaeff;
+  --kids: #f5b04c;
+  --kids-soft: #3a2a12;
+  --good: #4fd1a1;
+  --good-soft: #143328;
+  --bad: #ff8f6b;
+  --bad-soft: #3d1f16;
+  --side: #06080b;
+  --side-ink: #e8edf4;
+  --side-muted: #7e8899;
+  --side-active: rgba(122, 174, 255, 0.12);
+  --chart-plan: #4a5567;
+  --chart-orig: #2c3544;
+  color-scheme: dark;
+}
+
+:root {
+  --font: 'Geist', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --radius-card: 18px;
+  --radius-control: 11px;
+}
