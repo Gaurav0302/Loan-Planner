@@ -1,21 +1,41 @@
 import { useMemo } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Stat } from '../components/Stat';
-import { DEFAULT_SETUP, monthLabel, money, moneyShort, simulate, years } from '../engine';
+import { useStore } from '../data/store';
+import { monthLabel, money, moneyShort, simulate, years } from '../engine';
 
 export function Dashboard() {
-  const { plan, bank } = useMemo(
-    () => ({ plan: simulate(DEFAULT_SETUP, [], []), bank: simulate(DEFAULT_SETUP, [], [], { extras: false }) }),
-    [],
-  );
+  const { data, activePlan, dispatch } = useStore();
+  const { plan, bank } = useMemo(() => {
+    const changes = [...data.facts, ...activePlan.changes];
+    const lumps = [...data.factLumps, ...activePlan.lumps];
+    return {
+      plan: simulate(activePlan.setup, changes, lumps),
+      bank: simulate(activePlan.setup, data.facts, [], { extras: false }),
+    };
+  }, [data.facts, data.factLumps, activePlan]);
   const first = plan.points[0];
+  const otherPlans = data.plans.length - 1;
 
   return (
     <div className="page">
-      <PageHeader eyebrow="Dashboard" title="How you're doing" sub="Your real balances compared with the active plan." />
+      <PageHeader eyebrow="Dashboard" title="How you're doing" sub={<>Your real balances compared with <strong>{activePlan.name}</strong>.</>} />
+
+      {data.importedFromClassic && !data.importNoticeSeen && (
+        <section className="callout" role="status">
+          <div>
+            <h2 className="card-title">Your settings came across from the previous version</h2>
+            <p className="muted">
+              {activePlan.name} is your active plan{otherPlans > 0 ? `, and ${otherPlans} saved ${otherPlans === 1 ? 'plan' : 'plans'} came with it` : ''}.
+              The previous version still works and keeps its own copy.
+            </p>
+          </div>
+          <button type="button" className="btn" onClick={() => dispatch({ type: 'dismissImportNotice' })}>Got it</button>
+        </section>
+      )}
 
       <section className="card" aria-labelledby="engine-check">
-        <h2 className="card-title" id="engine-check">Calculation check, built-in starting values</h2>
+        <h2 className="card-title" id="engine-check">{activePlan.name}</h2>
         <div className="grid-4">
           <Stat label="Paid off" value={monthLabel(plan.paidIdx)} sub={`${years(plan.paidMonth)} of repayments`} />
           <Stat tone="good" label="Time saved" value={years(bank.paidMonth - plan.paidMonth)} sub={`The bank's schedule ends ${monthLabel(bank.paidIdx)}`} />
@@ -24,7 +44,7 @@ export function Dashboard() {
         </div>
       </section>
 
-      <p className="notice">The full dashboard (status cards, savings, chart, college funds, this month's money and your balances) arrives in phase 5. Your own figures are imported in phase 2.</p>
+      <p className="notice">The full dashboard (status cards, savings, chart, college funds, this month's money and your balances) arrives in phase 5.</p>
     </div>
   );
 }

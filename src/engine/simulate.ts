@@ -90,7 +90,8 @@ export function simulate(setup: Setup, changes: Change[], lumps: Lump[], options
           keepPaying = src?.keepPaying ?? 0;
         }
       } else if (type.startsWith('kid')) {
-        kidMonthly[Number(type.slice(3))] = value;
+        const i = Number(type.slice(3));
+        if (i < kidMonthly.length) kidMonthly[i] = value;
       } else {
         live[type] = value;
       }
