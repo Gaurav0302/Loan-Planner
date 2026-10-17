@@ -22,6 +22,10 @@
   --side-active: rgba(255, 255, 255, 0.09);
   --chart-plan: #a9b2bc;
   --chart-orig: #d4d9de;
+  /* Chart series, checked for colour-blind separation and contrast against the light surface. */
+  --series-actual: #1d5fd6;
+  --series-projection: #0f7b5f;
+  --series-mark: #c0650a;
   color-scheme: light;
 }
 
@@ -48,6 +52,10 @@
   --side-active: rgba(122, 174, 255, 0.12);
   --chart-plan: #4a5567;
   --chart-orig: #2c3544;
+  /* Chart series, darker than the UI accents so they sit in the dark-mode lightness band. */
+  --series-actual: #5b8de8;
+  --series-projection: #2e9e78;
+  --series-mark: #c2832a;
   color-scheme: dark;
 }
 

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { MonthStepper, Segmented, ValueInput } from '../components/fields';
 import { PageHeader } from '../components/PageHeader';
+import { checkInNet, expectedAt } from '../data/dashboard';
 import { changeKinds, describeChange, formatChangeValue } from '../data/describe';
 import { newId } from '../data/normalize';
 import { estimateRepayment, latestCheckIn, runPlan } from '../data/plans';
@@ -192,13 +193,6 @@ function RecordChange() {
   );
 }
 
-function expectedAt(data: ReturnType<typeof useStore>['data'], plan: Plan, month: YM) {
-  const run = runPlan(data, plan, { beforeMonth: month });
-  const p = run.res.points.find((x) => x.idx === toIdx(month)) ?? run.res.points[run.res.points.length - 1];
-  const kidsInOffset = plan.setup.kidsInOffset ? p.kids.reduce((a, b) => a + b, 0) : 0;
-  return { loan: p.loan, offset: p.offset + kidsInOffset, kids: p.kids, net: p.net };
-}
-
 function CheckIns() {
   const { data, activePlan, dispatch } = useStore();
   const nowIdx = currentMonthIdx();
@@ -219,7 +213,7 @@ function CheckIns() {
 
   const withEntry = useMemo(() => runPlan({ ...data, checkIns: [...data.checkIns.filter((c) => c.month !== month), entry] }, activePlan), [data, activePlan, month, entry]);
   const withoutEntry = useMemo(() => runPlan(data, activePlan, { beforeMonth: month }), [data, activePlan, month]);
-  const net = entry.loan - (entry.offset - (activePlan.setup.kidsInOffset ? entry.kids.reduce((a, b) => a + b, 0) : 0));
+  const net = checkInNet(activePlan, entry);
   const ahead = expected.net - net;
   const dm = withEntry.res.paidMonth - withoutEntry.res.paidMonth;
   const isLatest = !latestCheckIn(data.checkIns, activePlan) || month >= latestCheckIn(data.checkIns, activePlan)!.month;
@@ -229,9 +223,8 @@ function CheckIns() {
   }
 
   const history = [...data.checkIns].filter((c) => c.month >= start).sort((a, b) => b.month.localeCompare(a.month)).map((c) => {
-    const e = expectedAt(data, activePlan, c.month);
-    const n = c.loan - (c.offset - (activePlan.setup.kidsInOffset ? c.kids.reduce((a, b) => a + b, 0) : 0));
-    return { c, n, diff: e.net - n, college: c.kids.reduce((a, b) => a + b, 0) };
+    const n = checkInNet(activePlan, c);
+    return { c, n, diff: expectedAt(data, activePlan, c.month).net - n, college: c.kids.reduce((a, b) => a + b, 0) };
   });
 
   return (

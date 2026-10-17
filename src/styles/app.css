@@ -1124,6 +1124,421 @@ select {
   }
 }
 
+/* ---------- dashboard ---------- */
+
+.grid-2,
+.grid-3 {
+  display: grid;
+  gap: 16px;
+  align-items: start;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1180px) {
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.pill {
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--panel2);
+  white-space: nowrap;
+}
+
+.pill.ahead {
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.pill.behind {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero strong {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.since-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--panel2);
+  font-size: 13px;
+}
+
+.since-start > :last-child {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.progress {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--panel2);
+  overflow: hidden;
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--series-projection);
+}
+
+.progress.kids {
+  height: 8px;
+  background: var(--kids-soft);
+}
+
+.progress.kids > span {
+  background: var(--series-mark);
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.kid-list,
+.event-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kid-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kid-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 10px;
+}
+
+.event-list li {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 10px;
+  font-size: 13.5px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.event-list li:last-child {
+  border-bottom: none;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.stack-bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--panel2);
+}
+
+.stack-bar span {
+  display: block;
+  height: 100%;
+}
+
+.seg-loan { background: var(--series-projection); }
+.seg-living { background: var(--chart-plan); }
+.seg-kids { background: var(--series-mark); }
+.seg-extra { background: var(--series-actual); }
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 8px;
+  vertical-align: -1px;
+}
+
+.money-rows {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13.5px;
+}
+
+.money-rows div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.money-rows dd {
+  margin: 0;
+  font-family: var(--mono);
+}
+
+.compare-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+  position: relative;
+}
+
+.compare-bar span {
+  display: block;
+  height: 5px;
+  border-radius: 3px;
+}
+
+.cb-whole {
+  width: 100%;
+  background: var(--chart-plan);
+}
+
+.cb-part {
+  background: var(--good);
+}
+
+.year-table summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  cursor: pointer;
+  list-style-position: outside;
+}
+
+.year-table[open] summary {
+  margin-bottom: 4px;
+}
+
+.table tr.paid td,
+.table tr.paid th {
+  color: var(--good);
+  font-weight: 600;
+}
+
+/* ---------- chart ---------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.legend button,
+.legend-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+.legend-note {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.legend button[aria-pressed='false'] {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+.key {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--muted);
+  flex: none;
+}
+
+.key.s-actual { border-top: 3px solid var(--series-actual); }
+.key.s-projection { border-top: 2px solid var(--series-projection); }
+.key.s-original { border-top: 4px solid var(--chart-orig); }
+.key.s-bank { border-top: 2px dashed var(--chart-plan); }
+.key.s-fact { width: 0; height: 14px; border-top: none; border-left: 2px dotted var(--series-mark); }
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  column-gap: 8px;
+}
+
+.y-axis,
+.x-axis {
+  position: relative;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.y-axis span {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.y-axis span:first-child {
+  transform: none;
+}
+
+.y-axis span:last-child {
+  transform: none;
+}
+
+.x-axis {
+  height: 20px;
+  margin-top: 6px;
+}
+
+.x-axis span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.plot {
+  position: relative;
+  height: 240px;
+  touch-action: pan-y;
+  border-radius: 6px;
+}
+
+.plot svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.plot path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.plot .grid { stroke: var(--line); stroke-width: 1; }
+.plot .today { stroke: var(--muted); stroke-width: 1; }
+.plot .crosshair { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; }
+.plot .s-fact { stroke: var(--series-mark); stroke-width: 1.5; stroke-dasharray: 2 4; }
+.plot .line { stroke-linejoin: round; stroke-linecap: round; }
+.plot .s-actual { stroke: var(--series-actual); stroke-width: 3; }
+.plot .s-projection { stroke: var(--series-projection); stroke-width: 2; }
+.plot .s-original { stroke: var(--chart-orig); stroke-width: 5; }
+.plot .s-bank { stroke: var(--chart-plan); stroke-width: 2; stroke-dasharray: 6 5; }
+
+.plot .dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--series-actual);
+  box-shadow: 0 0 0 2px var(--panel);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.today-label {
+  position: absolute;
+  top: 2px;
+  margin-left: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  top: 8px;
+  margin-left: 12px;
+  z-index: 3;
+  min-width: 220px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+  font-size: 12.5px;
+}
+
+.tooltip.left {
+  transform: translateX(-100%);
+  margin-left: -12px;
+}
+
+.tip-title {
+  font-size: 13px;
+}
+
+.tip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tip-row b {
+  font-family: var(--mono);
+  min-width: 92px;
+}
+
+.tip-row span:last-child,
+.tip-meta {
+  color: var(--muted);
+}
+
 /* ---------- record ---------- */
 
 .seg-link {
