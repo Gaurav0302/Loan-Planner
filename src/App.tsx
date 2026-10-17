@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useStore } from './data/store';
 import { useLocation } from './lib/router';
 import { useTheme } from './lib/theme';
@@ -29,11 +30,13 @@ export function App() {
   return (
     <Shell route={route} theme={theme} onTheme={setTheme}>
       {!saved && <p className="banner" role="alert">This browser is not letting the app save. Changes will be lost when you close the page. Use Settings to save a backup file.</p>}
-      {route === 'dashboard' && <Dashboard />}
-      {route === 'plans' && <Plans />}
-      {route === 'edit' && <PlanEditor planId={param} />}
-      {route === 'record' && <Record tab={param} />}
-      {route === 'settings' && <Settings theme={theme} onTheme={setTheme} />}
+      <ErrorBoundary resetKey={`${route}/${param ?? ''}`}>
+        {route === 'dashboard' && <Dashboard />}
+        {route === 'plans' && <Plans />}
+        {route === 'edit' && <PlanEditor planId={param} />}
+        {route === 'record' && <Record tab={param} />}
+        {route === 'settings' && <Settings theme={theme} onTheme={setTheme} />}
+      </ErrorBoundary>
     </Shell>
   );
 }

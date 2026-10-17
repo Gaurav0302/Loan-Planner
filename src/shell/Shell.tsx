@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { href, type Route } from '../lib/router';
 import type { Theme } from '../lib/theme';
 import { Icon } from './icons';
@@ -19,8 +19,15 @@ interface Props {
 }
 
 export function Shell({ route, theme, onTheme, children }: Props) {
+  // Navigation uses the address hash, so the skip link moves focus itself instead of linking to #main.
+  const skip = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    document.getElementById('main')?.querySelector<HTMLElement>('h1')?.focus();
+  };
+
   return (
     <div className="shell">
+      <a className="skip-link" href={href(route)} onClick={skip}>Skip to content</a>
       <nav className="side" aria-label="Main">
         <a className="brand" href={href('dashboard')} aria-label="Timbertop, go to dashboard">
           <span className="brand-mark" aria-hidden="true">T</span>
