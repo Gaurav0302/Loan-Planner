@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { NetDebtChart } from '../components/NetDebtChart';
+import { CollegeChart } from '../components/CollegeChart';
+import { LoanChart } from '../components/LoanChart';
 import { PageHeader } from '../components/PageHeader';
 import { Stat } from '../components/Stat';
 import { dashboardModel, type DashboardModel } from '../data/dashboard';
@@ -66,7 +67,8 @@ export function Dashboard() {
         </div>
       </section>
 
-      <NetDebtChart model={m} plan={activePlan} data={data} />
+      <LoanChart model={m} plan={activePlan} data={data} />
+      <CollegeChart model={m} plan={activePlan} data={data} />
 
       <div className="grid-3">
         <MoneyCard m={m} />

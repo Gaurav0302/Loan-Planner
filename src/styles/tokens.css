@@ -26,6 +26,7 @@
   --series-actual: #1d5fd6;
   --series-projection: #0f7b5f;
   --series-mark: #c0650a;
+  --series-kid2: #8b4fd8;
   color-scheme: light;
 }
 
@@ -56,6 +57,7 @@
   --series-actual: #5b8de8;
   --series-projection: #2e9e78;
   --series-mark: #c2832a;
+  --series-kid2: #a07be0;
   color-scheme: dark;
 }
 
